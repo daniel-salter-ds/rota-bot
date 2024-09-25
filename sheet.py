@@ -53,4 +53,4 @@ class Sheet:
 
     except HttpError as err:
       print(err)
-      exit(1)
+      return []
