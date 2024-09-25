@@ -5,10 +5,7 @@ from sheet import Sheet
 
 
 def main():
-  spreadsheet_id = os.environ.get('SAMPLE_SPREADSHEET_ID')
-  range_name = os.environ.get('SAMPLE_RANGE_NAME')
-
-  sheet = Sheet(spreadsheet_id, range_name)
+  sheet = Sheet()
   values = sheet.read_values()
 
   if not values:
@@ -17,6 +14,8 @@ def main():
 
   rota = Rota(values)
   print(rota)
+
+  link = sheet.get_link()
 
 
 if __name__ == "__main__":

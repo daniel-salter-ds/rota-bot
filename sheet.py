@@ -7,19 +7,12 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 class Sheet:
-  sheet_id: str
-  range_name: str
-  # If modifying these scopes, delete the file token.json.
-  scopes: list[str]
 
-
-  def __init__(self, sheet_id: str, range_name: str, scopes: list[str] = None) -> None:
-    self.sheet_id = sheet_id
-    self.range_name = range_name
+  def __init__(self, sheet_id: str = None, range_name: str = None, scopes: list[str] = None) -> None:
+    self.sheet_id = os.environ.get('ROTA_SPREADSHEET_ID') if scopes is None else sheet_id
+    self.range_name = os.environ.get('ROTA_RANGE_NAME') if scopes is None else range_name
     self.scopes = os.environ.get('DEFAULT_SCOPE') if scopes is None else scopes
 
-
-  def read_values(self):
     creds = None
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
@@ -40,10 +33,15 @@ class Sheet:
         token.write(creds.to_json())
 
     try:
-      service = build("sheets", "v4", credentials=creds)
+      self.service = build("sheets", "v4", credentials=creds)
 
+    except HttpError as err:
+      print(f'ERROR: Failed to setup Sheets service: {err}')
+
+  def read_values(self):
+    try:
       # Call the Sheets API
-      sheet = service.spreadsheets()
+      sheet = self.service.spreadsheets()
       result = (
           sheet.values()
           .get(spreadsheetId=self.sheet_id, range=self.range_name)
@@ -54,3 +52,6 @@ class Sheet:
     except HttpError as err:
       print(err)
       return []
+
+  def get_link(self):
+    return f"https://docs.google.com/spreadsheets/d/{self.sheet_id}"
