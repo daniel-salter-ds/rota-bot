@@ -1,4 +1,3 @@
-
 from pydantic import BaseModel
 from pydantic.functional_validators import field_validator
 

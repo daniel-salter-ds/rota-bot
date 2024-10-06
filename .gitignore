@@ -369,3 +369,4 @@ lambda_function/**
 lambda_function.zip
 *credentials*.json
 output.json
+user_ids.json

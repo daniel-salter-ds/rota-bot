@@ -1,4 +1,7 @@
+import json
 import os
+from datetime import datetime
+
 import telebot
 
 from model.rota import Rota
@@ -14,6 +17,10 @@ commands = """/start - Start the bot
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
 
 bot = telebot.TeleBot(BOT_TOKEN)
+
+sheet = Sheet()
+values = sheet.read_values()
+rota = Rota(values)
 
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
@@ -34,9 +41,6 @@ def send_time(message):
 
 @bot.message_handler(commands=['rotaRaw'])
 def send_raw_rota(message):
-    sheet = Sheet()
-    values = sheet.read_values()
-
     if not values:
         bot.send_message(message.chat.id, "ERROR: No data found.")
         return
@@ -46,7 +50,6 @@ def send_raw_rota(message):
 
 @bot.message_handler(commands=['rotaLink'])
 def send_raw_rota(message):
-    sheet = Sheet()
     link = sheet.get_link()
 
     if not link:
@@ -55,11 +58,41 @@ def send_raw_rota(message):
 
     bot.send_message(message.chat.id, link)
 
+@bot.message_handler(commands=['rota'])
+def send_rota(message):
+    try:
+        date_arg = message.text.split()[1]
+        date = datetime.strptime(date_arg, "%d/%m/%Y")
+    except (IndexError, ValueError):
+        date = datetime.now()
 
-# @bot.message_handler(func=lambda msg: True)
-# def echo_all(message):
-#     bot.reply_to(message, message.text)
+    if not values:
+        bot.send_message(message.chat.id, "ERROR: No data found.")
+        return
 
+    text = rota.get_message_by_housemate(date)
+    bot.send_message(message.chat.id, text)
 
+@bot.message_handler(commands=['id'])
+def send_user_id(message):
+    file_path = "user_ids.json"
+
+    user = message.from_user
+    # user_data = {message.from_user.id: message.from_user.full_name}
+
+    if not os.path.exists(file_path):
+        with open(file_path, 'w') as f:
+            f.write("{}")
+
+    with open(file_path, 'r+') as f:
+        existing_data = dict(json.load(f))
+
+        # Update existing data or add new user
+        existing_data[user.id] = user.full_name
+
+        # Write updated data back to the JSON file
+        f.seek(0)
+        f.truncate()
+        json.dump(existing_data, f, indent=4)
 
 bot.infinity_polling()
