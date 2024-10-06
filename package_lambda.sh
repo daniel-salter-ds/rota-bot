@@ -5,15 +5,23 @@ REQUIREMENTS_FILE="requirements.txt"
 PACKAGE_DIR="package"
 ZIP_FILE="lambda_function.zip"
 LAMBDA_FUNCTION="lambda_function.py"
-LOCAL_DEPENDENCIES=("sheet.py" "model/")  # Local files and directories
+LOCAL_DEPENDENCIES=("sheet.py" "model/" "sheets_serviceuser_credentials.json")  # Local files and directories
 AWS_LAMBDA_FUNCTION_NAME="sendRotaReminder"
 ENV_FILE=".env"
+DOCKER_IMAGE="public.ecr.aws/lambda/python:3.12"  # Use the correct runtime for your Lambda
 
-
-# Step 1: Install dependencies into the package directory
+# Step 1: Use Docker to install dependencies into the package directory, forcing x86_64 architecture
 if [ -f "$REQUIREMENTS_FILE" ]; then
-    echo "Installing dependencies from $REQUIREMENTS_FILE..."
-    pip install -r "$REQUIREMENTS_FILE" --target "$PACKAGE_DIR"
+    echo "Installing dependencies from $REQUIREMENTS_FILE using Docker (x86_64)..."
+
+    # Use Docker with the --platform flag to simulate an x86_64 environment on ARM64 Mac
+    # Override the entrypoint to execute the pip install command
+    docker run --rm --platform linux/amd64 --entrypoint /bin/sh -v $(pwd):/var/task $DOCKER_IMAGE -c "pip install -r $REQUIREMENTS_FILE --target $PACKAGE_DIR"
+
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to install dependencies inside Docker."
+        exit 1
+    fi
 else
     echo "No $REQUIREMENTS_FILE found, skipping dependency installation."
 fi
