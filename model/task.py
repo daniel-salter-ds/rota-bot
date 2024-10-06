@@ -30,6 +30,6 @@ class Task(BaseModel):
     sow = _get_start_of_week(date)
     try:
       initials = self.schedule[sow]
-      return self.responsible[initials].get_name()
+      return self.responsible[initials]
     except KeyError:
       return None

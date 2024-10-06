@@ -2,12 +2,30 @@ from pydantic import BaseModel
 from pydantic.functional_validators import field_validator
 
 housemates = {
-  'DS': 'Dan S',
-  'MH': 'Millie',
-  'HB': 'Holly',
-  'JL': 'James',
-  'AK': 'Alex',
-  'DW': 'Dan W'
+    "DS": {
+        "id": "5883075633",
+        "name": "Dan S"
+    },
+    "MH": {
+        "id": "",
+        "name": "Millie"
+    },
+    "HB": {
+        "id": "",
+        "name": "Holly"
+    },
+    "JL": {
+        "id": "",
+        "name": "James"
+    },
+    "AK": {
+        "id": "",
+        "name": "Alex"
+    },
+    "DW": {
+        "id": "",
+        "name": "Dan W"
+    }
 }
 
 class Housemate(BaseModel):
@@ -20,7 +38,10 @@ class Housemate(BaseModel):
     return initials
 
   def get_name(self):
-    return housemates[self.initials]
+    return housemates[self.initials]["name"]
+
+  def get_id(self):
+    return housemates[self.initials]["id"]
 
   def __str__(self):
-    return self.get_name()
+    return self.initials

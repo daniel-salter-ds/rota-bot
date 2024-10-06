@@ -71,7 +71,7 @@ def send_rota(message):
         return
 
     text = rota.get_message_by_housemate(date)
-    bot.send_message(message.chat.id, text)
+    bot.send_message(message.chat.id, text, parse_mode="Markdown")
 
 @bot.message_handler(commands=['id'])
 def send_user_id(message):

@@ -5,8 +5,6 @@ from model.housemate import Housemate
 from model.area import Area
 
 
-
-
 class Rota:
   areas: list[Area] = []
 
@@ -36,16 +34,17 @@ class Rota:
       for task in area.tasks:
         who_is_on = task.who_is_on(date)
         if who_is_on:
-          message_parts.append(f"{task.name} - {who_is_on}")
+          message_parts.append(f"{task.name} - @{who_is_on}")
     return '\n'.join(message_parts)
 
   def get_message_by_housemate(self, date: datetime) -> str:
     hm_areas = self.get_housemate_areas(date)
 
     message_parts = ["Hi! Here's this week's responsibilities:"]
-    for hm, areas in hm_areas.items():
-      message_parts.append(f"\n{hm}:")
-      for area in areas:
+    for initials in hm_areas:
+      housemate = Housemate(initials=initials)
+      message_parts.append(f"\n[{housemate.get_name()}](tg://user?id={housemate.get_id()}):")
+      for area in hm_areas[initials]:
         message_parts.append(f"    {area.name}:")
         for task in area.tasks:
           who_is_on = task.who_is_on(date)
@@ -56,11 +55,11 @@ class Rota:
 
 
 
-  def get_housemate_areas(self, date: datetime) -> dict[Housemate, list[Area]]:
+  def get_housemate_areas(self, date: datetime) -> dict[str, list[Area]]:
     hm_areas = {}
     for area in self.areas:
       for task in area.tasks:
-        who_is_on = task.who_is_on(date)
+        who_is_on = task.who_is_on(date).initials
         if who_is_on in hm_areas:
           hm_areas_list = hm_areas[who_is_on]
           current_area = [a for a in hm_areas_list if a.name == area.name]
