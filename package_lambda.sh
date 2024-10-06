@@ -7,6 +7,7 @@ ZIP_FILE="lambda_function.zip"
 LAMBDA_FUNCTION="lambda_function.py"
 LOCAL_DEPENDENCIES=("sheet.py" "model/")  # Local files and directories
 AWS_LAMBDA_FUNCTION_NAME="sendRotaReminder"
+ENV_FILE=".env"
 
 
 # Step 1: Install dependencies into the package directory
