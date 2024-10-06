@@ -363,3 +363,7 @@ credentials.json
 token.json
 
 .DS_Store
+
+package/**
+lambda_function/**
+lambda_function.zip
