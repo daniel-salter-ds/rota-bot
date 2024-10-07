@@ -37,10 +37,10 @@ class Rota:
           message_parts.append(f"{task.name} - @{who_is_on}")
     return '\n'.join(message_parts)
 
-  def get_message_by_housemate(self, date: datetime) -> str:
+  def get_message_by_housemate(self, date: datetime, opening: str = "Hi! Here's this week's responsibilities:") -> str:
     hm_areas = self.get_housemate_areas(date)
 
-    message_parts = ["Hi! Here's this week's responsibilities:"]
+    message_parts = [opening]
     for initials in hm_areas:
       housemate = Housemate(initials=initials)
       message_parts.append(f"\n[{housemate.get_name()}](tg://user?id={housemate.get_id()}):")
@@ -53,8 +53,6 @@ class Rota:
 
     return '\n'.join(message_parts)
 
-
-
   def get_housemate_areas(self, date: datetime) -> dict[str, list[Area]]:
     hm_areas = {}
     for area in self.areas:
@@ -64,13 +62,12 @@ class Rota:
           initials = who_is_on.initials
           if initials in hm_areas:
             hm_areas_list = hm_areas[initials]
-            current_area = [a for a in hm_areas_list if a.name == area.name]
-            if len(current_area) == 0:
+            area_in_dict = [a for a in hm_areas_list if a.name == area.name]
+            if area_in_dict: # Area already exists in hm's Area list
+              area_in_dict[0].add_task(task)
+            else: # Add task to existing area
               hm_areas[initials].append(Area(name=task.area_name, tasks=[task]))
-            elif len(current_area) == 1:
-              current_area[0].add_task(task)
-          else:
+          else: # Housemate does not exist in dict yet
             hm_areas[initials] = [Area(name=task.area_name, tasks=[task])]
-
     return hm_areas
 
