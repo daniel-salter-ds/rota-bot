@@ -59,16 +59,18 @@ class Rota:
     hm_areas = {}
     for area in self.areas:
       for task in area.tasks:
-        who_is_on = task.who_is_on(date).initials
-        if who_is_on in hm_areas:
-          hm_areas_list = hm_areas[who_is_on]
-          current_area = [a for a in hm_areas_list if a.name == area.name]
-          if len(current_area) == 0:
-            hm_areas[who_is_on].append(Area(name=task.area_name, tasks=[task]))
-          elif len(current_area) == 1:
-            current_area[0].add_task(task)
-        elif who_is_on:
-          hm_areas[who_is_on] = [Area(name=task.area_name, tasks=[task])]
+        who_is_on = task.who_is_on(date)
+        if who_is_on:
+          initials = who_is_on.initials
+          if initials in hm_areas:
+            hm_areas_list = hm_areas[initials]
+            current_area = [a for a in hm_areas_list if a.name == area.name]
+            if len(current_area) == 0:
+              hm_areas[initials].append(Area(name=task.area_name, tasks=[task]))
+            elif len(current_area) == 1:
+              current_area[0].add_task(task)
+          else:
+            hm_areas[initials] = [Area(name=task.area_name, tasks=[task])]
 
     return hm_areas
 
