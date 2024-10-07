@@ -4,27 +4,27 @@ from pydantic.functional_validators import field_validator
 housemates = {
     "DS": {
         "id": "5883075633",
-        "name": "Dan S"
+        "name": "Dennis"
     },
     "MH": {
         "id": "",
-        "name": "Millie"
+        "name": "McMould"
     },
     "HB": {
         "id": "",
-        "name": "Holly"
+        "name": "BigRat"
     },
     "JL": {
         "id": "",
-        "name": "James"
+        "name": "JLus"
     },
     "AK": {
         "id": "",
-        "name": "Alex"
+        "name": "TheRake"
     },
     "DW": {
         "id": "",
-        "name": "Dan W"
+        "name": "Watquiche"
     }
 }
 
