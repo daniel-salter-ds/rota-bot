@@ -11,11 +11,11 @@ housemates = {
         "name": "McMould"
     },
     "HB": {
-        "id": "",
+        "id": "7515725304",
         "name": "BigRat"
     },
     "JL": {
-        "id": "",
+        "id": "7849108694",
         "name": "JLus"
     },
     "AK": {
